@@ -33,7 +33,7 @@ class ClientView(View):
                 client["latitude_home"] = info.latitude_home
 
             if email != "default" :
-                client = clients.filter(email = email)
+                client = next(filter(lambda d: d.get("email") == email, clients), None)
                 datos = {'cliente':client}
             else:
                 datos = {'clientes':clients}
