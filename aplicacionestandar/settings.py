@@ -56,6 +56,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     #Cambiar esto cuando este en produccion
     'http://localhost:4200',
+    'http://localhost:8100',
 ]
 
 ROOT_URLCONF = 'aplicacionestandar.urls'

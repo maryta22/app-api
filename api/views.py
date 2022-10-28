@@ -13,7 +13,7 @@ class ClientView(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request):
+    def get(self, request, email = "default"):
         clients = list(Client.objects.values())
         if len(clients)>0:
             for client in clients:
@@ -31,18 +31,48 @@ class ClientView(View):
                 client["date_modify"] = info.date_modify
                 client["longitude_home"] = info.longitude_home
                 client["latitude_home"] = info.latitude_home
-            datos = {'cliente':clients}
+
+            if email != "default" :
+                client = clients.filter(email = email)
+                datos = {'cliente':client}
+            else:
+                datos = {'clientes':clients}
         else:
             datos = {'mensaje':'No se han encontrado clientes'}
+
         return JsonResponse(datos)
 
     def post(self, request):
         try:
             data = json.loads(request.body)
-            reponse = {'mensaje':'Exito'}
+            newuser = User.objects.create(
+                name = data["name"],
+                lastname = data["lastname"],
+                email = data["email"],
+                password = data["password"],
+                phone = data["phone"],
+                gender = data["gender"],
+                date_of_birthday = data["date_of_birthday"],
+                state = data["state"],
+                user = data["user"],
+                date_register = data["date_register"],
+                date_modify = data["date_modify"],
+                longitude_home = data["longitude_home"],
+                latitude_home = data["latitude_home"],
+            )
+
+            Client.objects.create(
+                id_user = newuser,
+                date_start = data["date_start"]
+            )
+
+            response = {'mensaje':'Exito'}
+
         except:
-            reponse = {'mensaje':'Está mal el formato enviado'}
-        return JsonResponse(reponse)
+            response = {'mensaje':'Esta mal el formato enviado' }
+
+        return JsonResponse(response)
+
 
     def put(self, request):
         pass
